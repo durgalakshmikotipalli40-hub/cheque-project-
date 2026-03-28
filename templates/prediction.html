@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cheque Verification | Automated Cheque Verification AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif;}
+body {
+    min-height: 100vh;
+    background-image: url('{% static "images/last_bg.jpg" %}');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #111;
+}
+.overlay {
+                  min-height: 100vh;
+                  background: none;
+        }
+
+/* NAVBAR */
+.navbar {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:22px 70px;
+    background: rgba(255, 255, 255, 0.484);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.navbar-brand { font-size: 1.7rem; font-weight: 700; }
+.navbar ul { list-style:none; display:flex; gap: 25px; }
+.navbar ul li a {
+    text-decoration:none;
+    color:#1d1d1f;
+    font-weight:500;
+    padding:8px 14px;
+    border-radius:10px;
+    transition:0.25s;
+}
+.navbar ul li a:hover { background: rgba(0,0,0,0.05); }
+.navbar ul li a.active { background: rgba(0,122,255,0.15); color:#007aff; font-weight:600; }
+
+/* MAIN CARD */
+.container {
+    max-width: 950px;
+    margin: 70px auto;
+    padding: 45px;
+    background: rgba(255, 255, 255, 0.589);
+    border-radius: 26px;
+    box-shadow: 0 30px 85px rgba(0,0,0,0.18);
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    padding: 25px;
+    background: rgba(255,255,255,0.55);
+    border: 2px dashed #ffbf00;
+    border-radius: 18px;
+    color: #333;
+    text-align:center;
+    transition: 0.3s;
+}
+.upload-box:hover {
+    background: rgba(255,255,255,0.8);
+    border-color: #ffdd55;
+}
+
+/* BUTTON */
+.btn {
+    background: linear-gradient(90deg, #ffbf00, #ffdd57);
+    color:black;
+    padding:14px 25px;
+    border:none;
+    width:100%;
+    border-radius:14px;
+    font-size:1.2rem;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+    transition:0.3s;
+}
+.btn:hover {
+    letter-spacing:1px;
+    background: linear-gradient(90deg, #ffd43b, #ffe680);
+}
+
+/* OUTPUT BADGE */
+.result-badge {
+    padding:14px 28px;
+    border-radius: 40px;
+    font-size:1.4rem;
+    font-weight:700;
+    color:white;
+    box-shadow:0 0 18px rgba(0,0,0,0.3);
+}
+.result-success {
+    background: linear-gradient(45deg, #0fa312, #22dd44);
+    box-shadow: 0 0 15px rgba(34,221,68,0.7);
+}
+.result-error {
+    background: linear-gradient(45deg, #c70000, #ff4d4d);
+    box-shadow: 0 0 15px rgba(255,77,77,0.6);
+}
+
+/* TABLE */
+table {
+    width:100%;
+    margin-top:25px;
+    border-collapse: collapse;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+}
+th {
+    background:#ffbf00;
+    padding:14px;
+    color:black;
+    font-size:1.1rem;
+    text-align:left;
+}
+td {
+    padding:12px;
+    border-bottom:1px solid #eee;
+    color:#222;
+}
+
+/* IMAGE */
+.preview-img {
+    width:100%;
+    margin-top:12px;
+    border-radius:18px;
+    border:4px solid #ffbf00;
+    box-shadow:0 8px 25px rgba(0,0,0,0.18);
+}
+
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-brand">🏦 Bank Cheque Verification</div>
+    <ul>
+        <li><a href="{%url 'userhome'%}"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="{%url 'ChequeSamples'%}"><i class="fa-solid fa-chart-line"></i> Cheques Samples</a></li>
+        <li><a href="{%url 'model_evaluation'%}"><i class="fa-solid fa-microscope"></i> Model Evaluation</a></li>
+        <li><a href="{%url 'prediction'%}" class="active"><i class="fa-solid fa-display"></i> Monitor</a></li>
+        <li><a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<!-- MAIN CARD -->
+<div class="container">
+
+    <h1 style="text-align:center; font-size:2.2rem; font-weight:700; margin-bottom:30px;">
+        Cheque Verification & Information Extraction
+    </h1>
+
+    <!-- UPLOAD FORM -->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label style="font-weight:600; font-size:1.1rem;">Upload Cheque Image</label>
+        <br><br>
+
+        <div class="upload-box">
+            {{ form.image }}
+        </div>
+        <br><br>
+
+        <button class="btn">Process Cheque</button>
+    </form>
+
+    <!-- SHOW IMAGE -->
+    {% if uploaded_image %}
+        <h2 style="margin-top:35px; font-size:1.6rem; font-weight:700;">Uploaded Cheque</h2>
+        <img src="{{ uploaded_image }}" class="preview-img">
+    {% endif %}
+
+    {% if success %}
+<div style="
+    text-align:center;
+    margin-top:25px;
+    padding:15px;
+    border-radius:12px;
+    background: linear-gradient(45deg, #0fa312, #22dd44);
+    color:white;
+    font-weight:bold;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+">
+    {{ success }}
+</div>
+{% endif %}
+
+    <!-- SHOW OUTPUT RESULT -->
+    {% if output %}
+        <div style="text-align:center; margin-top:25px;">
+            <span class="result-badge 
+                {% if 'VALID' in output %}
+                    result-success
+                {% else %}
+                    result-error
+                {% endif %}
+            ">{{ output }}</span>
+        </div>
+    {% endif %}
+
+    <!-- DETAILS TABLE -->
+    {% if details %}
+        <h2 style="margin-top:35px; font-size:1.6rem; font-weight:700;">Extracted Details</h2>
+
+        <table>
+            <tr><th>Field</th><th>Value</th></tr>
+            <tr><td>Payee Name</td><td>{{ details.payee_name }}</td></tr>
+            <tr><td>Amount (Words)</td><td>{{ details.amount_words }}</td></tr>
+            <tr><td>Amount (Number)</td><td>{{ details.amount_number }}</td></tr>
+            <tr><td>Account Number</td><td>{{ details.account_number }}</td></tr>
+            <tr><td>IFSC Code</td><td>{{ details.ifsc_code }}</td></tr>
+            <tr><td>Cheque Number</td><td>{{ details.cheque_number }}</td></tr>
+            <tr><td>Signature Remarks</td><td>{{ details.signature_remarks }}</td></tr>
+        </table>
+    {% endif %}
+
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Model Training | Automated Cheque Verification AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif;}
+
+body {
+    min-height:100vh;
+    color:#1d1d1f;
+    background-image:url('{% static "images/reg2_bg.jpg" %}');
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+ .overlay {
+                  min-height: 100vh;
+                  background: none;
+        }
+
+/* NAVBAR */
+.navbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:22px 70px;
+    background:rgba(255,255,255,0.78);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(0,0,0,0.08);
+}
+.navbar-brand {
+    font-size:1.8rem;
+    font-weight:800;
+}
+.navbar ul {
+    list-style:none;
+    display:flex;
+    gap:25px;
+}
+.navbar ul li a {
+    text-decoration:none;
+    color:#1d1d1f;
+    font-weight:500;
+    padding:8px 14px;
+    border-radius:10px;
+    transition:0.25s;
+}
+.navbar ul li a:hover { background:rgba(0,0,0,0.05); }
+.navbar ul li a.active { background:rgba(0,122,255,0.15); color:#007aff; font-weight:600; }
+
+/* MAIN TITLE */
+.section-title {
+    text-align:center;
+    font-size:2.4rem;
+    font-weight:900;
+    margin-top:40px;
+    color:#003f8c;
+}
+
+
+
+/* GRID FOR TWO CARDS */
+.two-col {
+    max-width:1200px;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:35px;
+}
+@media(max-width:900px){
+    .two-col { grid-template-columns:1fr; }
+}
+
+/* MODEL CARD */
+.model-card {
+    background:rgba(255,255,255,0.9);
+    border-radius:26px;
+    padding:35px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.20);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+}
+
+/* MODEL TITLE */
+.model-title {
+    font-size:1.8rem;
+    font-weight:800;
+    text-align:center;
+    color:#005bbb;
+    margin-bottom:25px;
+}
+
+/* METRICS */
+.metrics-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+.metric-box {
+    background:white;
+    padding:18px;
+    border-radius:14px;
+    text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.12);
+}
+.metric-label {
+    font-size:1rem;
+    color:#444;
+    font-weight:600;
+}
+.metric-value {
+    margin-top:6px;
+    font-size:1.5rem;
+    font-weight:900;
+    color:#007aff;
+}
+
+
+/* CONFUSION MATRIX TITLE */
+.cm-title {
+    text-align:center;
+    font-weight:800;
+    font-size:1.3rem;
+    margin:12px 0 10px 0;
+}
+
+/* IMAGES */
+.evaluation-img {
+    width:100%;
+    border-radius:18px;
+    border:3px solid #ffc107;
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    margin-bottom:25px;
+}
+
+footer {
+    text-align:center;
+    margin-top:60px;
+    padding:20px;
+    font-size:0.9rem;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="navbar-brand">🏦 Bank Cheque Verification</div>
+    <ul>
+        <li><a href="{%url 'userhome'%}"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="{%url 'ChequeSamples'%}"><i class="fa-solid fa-chart-line"></i> Cheques Samples</a></li>
+        <li><a href="{%url 'model_evaluation'%}"  class="active"><i class="fa-solid fa-microscope"></i> Model Evaluation</a></li>
+        <li><a href="{%url 'prediction'%}"><i class="fa-solid fa-display"></i> Monitor</a></li>
+        <li><a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+</nav>
+
+<h1 class="section-title">Model Evaluation Dashboard</h1>
+
+{% if sig_error %}
+<p style="color:red; text-align:center; margin-bottom:20px; font-weight:700;">
+    {{ sig_error }}
+</p>
+{% endif %}
+
+
+<div class="two-col">
+
+    <!-- SVM MODEL -->
+    <div class="model-card">
+        <h2 class="model-title">🖋 SVM Signature Verification Model</h2>
+
+        <div class="metrics-grid">
+            <div class="metric-box"><div class="metric-label">Accuracy</div><div class="metric-value">{{ sig_acc|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">Precision</div><div class="metric-value">{{ sig_pre|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">Recall</div><div class="metric-value">{{ sig_rec|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">F1 Score</div><div class="metric-value">{{ sig_f1|floatformat:2 }}</div></div>
+        </div>
+
+        <div class="cm-title">Confusion Matrix</div>
+        <img src="{{ sig_cm }}" class="evaluation-img">
+
+        <div class="cm-title">Metrics Visualization</div>
+        <img src="{{ sig_bar }}" class="evaluation-img">
+    </div>
+
+
+
+    <!-- CNN MODEL -->
+    <div class="model-card">
+        <h2 class="model-title">🔢 Digit CNN Recognition Model</h2>
+
+        <div class="metrics-grid">
+            <div class="metric-box"><div class="metric-label">Accuracy</div><div class="metric-value">{{ digit_acc|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">Precision</div><div class="metric-value">{{ digit_pre|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">Recall</div><div class="metric-value">{{ digit_rec|floatformat:2 }}</div></div>
+            <div class="metric-box"><div class="metric-label">F1 Score</div><div class="metric-value">{{ digit_f1|floatformat:2 }}</div></div>
+        </div>
+
+        <div class="cm-title">Confusion Matrix</div>
+        <img src="{{ digit_cm }}" class="evaluation-img">
+
+        <div class="cm-title">Metrics Visualization</div>
+        <img src="{{ digit_bar }}" class="evaluation-img">
+    </div>
+
+</div>
+
+
+<footer>
+© 2026 Automated Cheque Verification System | Powered by Deep Learning & Image Processing
+</footer>
+
+</div>
+</body>
+</html>
