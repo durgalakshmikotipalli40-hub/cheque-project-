@@ -4,8 +4,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+db.sqlite3
 media/
 uploaded/
-*.pt
-*.pth
-*.h5
+.env
