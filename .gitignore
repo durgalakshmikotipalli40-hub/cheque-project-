@@ -7,4 +7,9 @@ __pycache__/
 db.sqlite3
 media/
 uploaded/
-.env
+*.pt
+*.pth
+*.h5
+*.model
+*.pickle
+*.pkl
