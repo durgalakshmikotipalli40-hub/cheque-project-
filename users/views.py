@@ -325,6 +325,11 @@ def cheque_samples(request):
         "images": images
     })
 
+def model_evaluation(request):
+    return render(request, "ModelEvaluation.html", {
+        "message": "Model evaluation temporarily disabled"
+    })
+
 
 # ===========================
 # VERIFY OWNER OTP
