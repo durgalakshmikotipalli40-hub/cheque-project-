@@ -5,9 +5,9 @@ import os
 from django.conf import settings
 import numpy as np
 import cv2
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+#import matplotlib
+#matplotlib.use("Agg")
+#import matplotlib.pyplot as plt
 
 from django.core.mail import send_mail
 import random
