@@ -51,7 +51,31 @@ def send_owner_alert(request, account_number):
         return True
     except Exception:
         return False
+# resend otp #
 
+def resend_otp(request):
+    user_id = request.session.get('verify_user')
+
+    if not user_id:
+        messages.error(request, "Session expired")
+        return redirect('register')
+
+    user = UserAccount.objects.get(id=user_id)
+
+    otp = generate_otp()
+    user.otp = otp
+    user.otp_created_at = timezone.now()
+    user.save()
+
+    send_mail(
+        'Resend OTP',
+        f'Your new OTP is: {otp}',
+        settings.EMAIL_HOST_USER,
+        [user.email],
+    )
+
+    messages.success(request, "New OTP sent to your email")
+    return redirect('verify_otp')
 
 # ===========================
 # BASE
