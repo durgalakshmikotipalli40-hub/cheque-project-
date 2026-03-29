@@ -8,7 +8,8 @@ import numpy as np
 def preprocess(img_path):
     img = cv2.imread(img_path)
 
-    img, edges = preprocess(img_path)
+    if img is None:
+        return None, None
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -22,7 +23,7 @@ def preprocess(img_path):
 
 
 # ---------------------------------------------------------
-# STEP 2 — FIND CHEQUE OUTLINE (Largest rectangle)
+# STEP 2 — FIND CHEQUE OUTLINE
 # ---------------------------------------------------------
 
 def detect_cheque_outline(edges):
@@ -31,12 +32,9 @@ def detect_cheque_outline(edges):
     if len(contours) == 0:
         return None
 
-    # Largest contour = cheque boundary
     cnt = max(contours, key=cv2.contourArea)
-
     area = cv2.contourArea(cnt)
 
-    # Cheque must have a large rectangular region
     if area < 50000:
         return None
 
@@ -44,36 +42,37 @@ def detect_cheque_outline(edges):
 
 
 # ---------------------------------------------------------
-# STEP 3 — DETECT SIGNATURE AREA
-# Bottom-right quadrant of the cheque
+# STEP 3 — DETECT SIGNATURE
 # ---------------------------------------------------------
 
 def detect_signature(img):
     h, w = img.shape[:2]
 
-    # signature block is usually bottom-right of cheque
     sig_region = img[int(h*0.60):int(h*0.90), int(w*0.55):int(w*0.95)]
 
     gray = cv2.cvtColor(sig_region, cv2.COLOR_BGR2GRAY)
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     ink_pixels = np.sum(thresh == 255)
+    total_pixels = thresh.size
 
-    # signature must have enough ink pixels
-    if ink_pixels > 1500:
-        return True      # signature exists
-    return False          # signature missing
+    if total_pixels == 0:
+        return False
+
+    ink_ratio = ink_pixels / total_pixels
+
+    if ink_ratio > 0.02:
+        return True
+    return False
 
 
 # ---------------------------------------------------------
-# STEP 4 — CHECK BLUR (for tampering)
+# STEP 4 — BLUR CHECK
 # ---------------------------------------------------------
 
 def is_blurry(gray):
     laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
-
-    # Very low variance = blurred image
-    return laplacian_var < 60
+    return laplacian_var < 50
 
 
 # ---------------------------------------------------------
@@ -87,7 +86,7 @@ def process_cheque(img_path):
         return "ERROR: Could not load image"
     
     if edges is None:
-    return "ERROR: Image processing failed"
+        return "ERROR: Image processing failed"
 
     # 1. Detect cheque boundary
     cheque_outline = detect_cheque_outline(edges)
@@ -104,5 +103,4 @@ def process_cheque(img_path):
     if is_blurry(gray):
         return "FORGED (Cheque is blurred / tampered)"
 
-    # If passed all checks:
     return "VALID"
