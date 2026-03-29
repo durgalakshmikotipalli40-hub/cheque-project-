@@ -8,8 +8,7 @@ import numpy as np
 def preprocess(img_path):
     img = cv2.imread(img_path)
 
-    if img is None:
-        return None, "Image load failed"
+    img, edges = preprocess(img_path)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -86,6 +85,9 @@ def process_cheque(img_path):
 
     if img is None:
         return "ERROR: Could not load image"
+    
+    if edges is None:
+    return "ERROR: Image processing failed"
 
     # 1. Detect cheque boundary
     cheque_outline = detect_cheque_outline(edges)
