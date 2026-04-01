@@ -368,3 +368,24 @@ def verify_owner_otp(request):
             })
 
     return render(request, "verify_owner_otp.html")
+
+def cheque_samples(request):
+    import os
+    from django.conf import settings
+
+    dataset_dir = os.path.join(
+        settings.MEDIA_ROOT,
+        "cheque_data/images/train/fixed"
+    )
+
+    images = []
+    if os.path.exists(dataset_dir):
+        for f in os.listdir(dataset_dir):
+            if f.lower().endswith(".jpg"):
+                images.append(
+                    f"{settings.MEDIA_URL}cheque_data/images/train/fixed/{f}"
+                )
+
+    return render(request, "ChequeSamples.html", {
+        "images": images
+    })
