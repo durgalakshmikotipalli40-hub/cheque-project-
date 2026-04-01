@@ -192,7 +192,7 @@ def userlogin(request):
 
             if not user:
                   messages.error(request, "User not found")
-            return redirect('userlogin')
+                  return redirect('userlogin')
 
             if not user.check_password(password):
                 messages.error(request, "Incorrect password")
@@ -295,33 +295,43 @@ def prediction(request):
             except Exception as e:
                 print("VALIDATION ERROR:", e)
                 is_cheque = True
-
             if not is_cheque:
-                return render(request, 'prediction.html', {
-                    'form': form,
-                    'error': "Invalid Document",
-                    'uploaded_image': uploaded_image
-                })
+               return render(request, 'prediction.html', {
+                 'form': form,
+                 'error': "Invalid Document",
+                 'uploaded_image': uploaded_image
+               })
 
-            output = process_cheque(save_path)
+# 👇 THIS SHOULD BE OUTSIDE (important)
+        try:
+               output = process_cheque(save_path)
+        except Exception as e:
+            print("PROCESS ERROR:", e)
+            output = None
+
+        try:
             details = extract_cheque_details(save_path)
+        except Exception as e:
+            print("EXTRACT ERROR:", e)
+        details = None
 
-            print("DETAILS:", details)   # ✅ ADD THIS
+        print("DETAILS:", details)
 
-            request.session['uploaded_image'] = uploaded_image
-            request.session['output'] = output
-            request.session['details'] = details
+        request.session['uploaded_image'] = uploaded_image
+        request.session['output'] = output
+        request.session['details'] = details
 
-            if details:
-              acc = details.get("Account Number") or details.get("account_number")
+# ✅ ISSUE 3 FIX HERE
+        if details and isinstance(details, dict):
+           acc = details.get("Account Number") or details.get("account_number")
 
-              print("ACCOUNT:", acc)   # ✅ ADD THIS
+           print("ACCOUNT:", acc)
+ 
+        if acc:
+          sent = send_owner_alert(request, acc)
 
-              if acc:
-                 sent = send_owner_alert(request, acc)
-
-                 if sent:
-                    return redirect('verify_owner_otp')
+        if sent:
+            return redirect('verify_owner_otp')
 
         else:
             error = "Invalid form"
@@ -373,10 +383,10 @@ def cheque_samples(request):
     import os
     from django.conf import settings
 
-    dataset_dir = os.path.join(
-        settings.MEDIA_ROOT,
-        "cheque_data/images/train/fixed"
-    )
+    images = [
+        settings.STATIC_URL + "images/sample1.jpg",
+        settings.STATIC_URL + "images/sample2.jpg",
+    ]
 
     images = []
     if os.path.exists(dataset_dir):
