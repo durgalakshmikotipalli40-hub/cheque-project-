@@ -183,58 +183,62 @@ td {
         <button class="btn">Process Cheque</button>
     </form>
 
-    <!-- SHOW IMAGE -->
-    {% if uploaded_image %}
-        <h2 style="margin-top:35px; font-size:1.6rem; font-weight:700;">Uploaded Cheque</h2>
-        <img src="{{ uploaded_image }}" class="preview-img">
-    {% endif %}
-
     {% if success %}
+    <h3 style="color: green;">{{ success }}</h3>
+{% endif %}
+
+
+
+    <!-- ✅ SUCCESS -->
+{% if success %}
 <div style="
     text-align:center;
-    margin-top:25px;
+    margin-top:20px;
     padding:15px;
     border-radius:12px;
     background: linear-gradient(45deg, #0fa312, #22dd44);
     color:white;
     font-weight:bold;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
 ">
     {{ success }}
 </div>
 {% endif %}
 
-    <!-- SHOW OUTPUT RESULT -->
-    {% if output %}
-        <div style="text-align:center; margin-top:25px;">
-            <span class="result-badge 
-                {% if 'VALID' in output %}
-                    result-success
-                {% else %}
-                    result-error
-                {% endif %}
-            ">{{ output }}</span>
-        </div>
-    {% endif %}
 
-    <!-- DETAILS TABLE -->
-    {% if details %}
-        <h2 style="margin-top:35px; font-size:1.6rem; font-weight:700;">Extracted Details</h2>
+<!-- ✅ IMAGE -->
+{% if uploaded_image %}
+    <h2 style="margin-top:30px;">Uploaded Cheque</h2>
+    <img src="{{ uploaded_image }}" class="preview-img">
+{% endif %}
 
-        <table>
-            <tr><th>Field</th><th>Value</th></tr>
-            <tr><td>Payee Name</td><td>{{ details.payee_name }}</td></tr>
-            <tr><td>Amount (Words)</td><td>{{ details.amount_words }}</td></tr>
-            <tr><td>Amount (Number)</td><td>{{ details.amount_number }}</td></tr>
-            <tr><td>Account Number</td><td>{{ details.account_number }}</td></tr>
-            <tr><td>IFSC Code</td><td>{{ details.ifsc_code }}</td></tr>
-            <tr><td>Cheque Number</td><td>{{ details.cheque_number }}</td></tr>
-            <tr><td>Signature Remarks</td><td>{{ details.signature_remarks }}</td></tr>
-        </table>
-    {% endif %}
 
-</div>
+<!-- ✅ RESULT -->
+{% if output %}
+    <div style="text-align:center; margin-top:20px;">
+        <span class="result-badge 
+            {% if 'VALID' in output %}
+                result-success
+            {% else %}
+                result-error
+            {% endif %}
+        ">{{ output }}</span>
+    </div>
+{% endif %}
 
-</div>
-</body>
-</html>
+
+<!-- ✅ DETAILS -->
+{% if details %}
+    <h2 style="margin-top:30px;">Cheque Details</h2>
+
+    <table>
+        <tr><th>Field</th><th>Value</th></tr>
+
+        <tr><td>Payee Name</td><td>{{ details.Payee_Name|default:details.payee_name }}</td></tr>
+        <tr><td>Amount (Words)</td><td>{{ details.Amount_Words|default:details.amount_words }}</td></tr>
+        <tr><td>Amount (Number)</td><td>{{ details.Amount_Number|default:details.amount_number }}</td></tr>
+        <tr><td>Account Number</td><td>{{ details.Account_Number|default:details.account_number }}</td></tr>
+        <tr><td>IFSC Code</td><td>{{ details.IFSC_Code|default:details.ifsc_code }}</td></tr>
+        <tr><td>Cheque Number</td><td>{{ details.Cheque_Number|default:details.cheque_number }}</td></tr>
+        <tr><td>Signature Remarks</td><td>{{ details.Signature_Remarks|default:details.signature_remarks }}</td></tr>
+    </table>
+{% endif %}

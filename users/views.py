@@ -256,7 +256,7 @@ def prediction(request):
 
             uploaded_image = f"{settings.MEDIA_URL}uploaded/{img_file.name}"
 
-            # ✅ validation
+            # ✅ VALIDATION
             try:
                 is_cheque, reason = validate_cheque_image(save_path)
             except:
@@ -276,36 +276,46 @@ def prediction(request):
                 print("PROCESS ERROR:", e)
                 output = None
 
+            # ✅ EXTRACT DETAILS (IMPORTANT FIX)
             try:
                 details = extract_cheque_details(save_path)
             except Exception as e:
                 print("EXTRACT ERROR:", e)
-                
+                details = None   # ✅ FIX
 
             print("DETAILS:", details)
-            print("FILE PATH:", save_path)
 
+            # ✅ SESSION STORE
             request.session['uploaded_image'] = uploaded_image
             request.session['output'] = output
             request.session['details'] = details
 
-            # ✅ OWNER OTP LOGIC (FIXED)
+            # ✅ OTP SEND (IMPORTANT FIX)
             acc = None
             sent = False
 
             if details and isinstance(details, dict):
-                acc = details.get("Account Number") or details.get("account_number")
+
+                # 🔥 MULTIPLE KEY CHECK
+                acc = (
+                    details.get("Account Number") or
+                    details.get("account_number") or
+                    details.get("Account_Number")
+                )
 
                 print("ACCOUNT:", acc)
 
+            # 🔥 FORCE OTP (for testing)
             if acc:
                 sent = send_owner_alert(request, acc)
+            else:
+                print("Account not found → still sending OTP for testing")
+                sent = send_owner_alert(request, "dummy")
 
             if sent:
                 return redirect('verify_owner_otp')
             else:
-                messages.error(request, "Failed to send owner OTP")
-                 
+                error = "OTP sending failed"
 
     else:
         form = ImageUploadForm()
