@@ -389,3 +389,6 @@ def cheque_samples(request):
     return render(request, "ChequeSamples.html", {
         "images": images
     })
+
+def model_evaluation(request):
+    return render(request, "ModelEvaluation.html")
