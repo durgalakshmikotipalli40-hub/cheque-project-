@@ -144,6 +144,40 @@ def verify_otp(request):
 
     return render(request, 'verify_otp.html')
 
+#resend otp 
+
+def resend_otp(request):
+    user_id = request.session.get('verify_user')
+
+    if not user_id:
+        messages.error(request, "Session expired")
+        return redirect('register')
+
+    user = UserAccount.objects.filter(id=user_id).first()
+
+    if not user:
+        messages.error(request, "User not found")
+        return redirect('register')
+
+    otp = generate_otp()
+    user.otp = otp
+    user.otp_created_at = timezone.now()
+    user.save()
+
+    try:
+        send_mail(
+            'Resend OTP',
+            f'Your new OTP is: {otp}',
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
+        messages.success(request, "New OTP sent")
+    except Exception as e:
+        print("RESEND ERROR:", e)
+        messages.error(request, "Failed to send OTP")
+
+    return redirect('verify_otp')
+
 
 # ===========================
 # LOGIN
