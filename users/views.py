@@ -26,7 +26,9 @@ def generate_otp():
 # SEND OTP TO OWNER
 # ===========================
 def send_owner_alert(request, account_number):
-    email = "durgalakshmikotipalli40@gmail.com"
+     # 👉 TEMPORARY (until DB mapping ready)
+    email = settings.EMAIL_HOST_USER  
+
 
     otp = generate_otp()
     request.session['owner_otp'] = otp
@@ -278,7 +280,7 @@ def prediction(request):
                 details = extract_cheque_details(save_path)
             except Exception as e:
                 print("EXTRACT ERROR:", e)
-                details = None
+                
 
             print("DETAILS:", details)
             print("FILE PATH:", save_path)
@@ -300,7 +302,10 @@ def prediction(request):
                 sent = send_owner_alert(request, acc)
 
             if sent:
-                 return redirect('verify_owner_otp')
+                return redirect('verify_owner_otp')
+            else:
+                messages.error(request, "Failed to send owner OTP")
+                 
 
     else:
         form = ImageUploadForm()
@@ -324,6 +329,7 @@ def verify_owner_otp(request):
         real = request.session.get("owner_otp")
 
         if entered == real:
+
             uploaded_image = request.session.get("uploaded_image")
             output = request.session.get("output")
             details = request.session.get("details")
