@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
 # ============================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
      # ADD THIS 👇
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
@@ -116,7 +117,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # 📧 EMAIL CONFIG
 # ============================
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

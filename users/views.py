@@ -5,9 +5,6 @@ import os
 from django.conf import settings
 import numpy as np
 import cv2
-#import matplotlib
-#matplotlib.use("Agg")
-#import matplotlib.pyplot as plt
 
 from django.core.mail import send_mail
 import random
@@ -49,10 +46,14 @@ def send_owner_alert(request, account_number):
             recipient_list=[email],
         )
         return True
-    except Exception:
+    except Exception as e:
+        print("OWNER OTP ERROR:", e)
         return False
-# resend otp #
 
+
+# ===========================
+# RESEND OTP
+# ===========================
 def resend_otp(request):
     user_id = request.session.get('verify_user')
 
@@ -60,22 +61,32 @@ def resend_otp(request):
         messages.error(request, "Session expired")
         return redirect('register')
 
-    user = UserAccount.objects.get(id=user_id)
+    
+    user = UserAccount.objects.filter(id=user_id).first()
+
+    if not user:
+       messages.error(request, "User not found")
+       return redirect('register')
 
     otp = generate_otp()
     user.otp = otp
     user.otp_created_at = timezone.now()
     user.save()
 
-    send_mail(
-        'Resend OTP',
-        f'Your new OTP is: {otp}',
-        settings.EMAIL_HOST_USER,
-        [user.email],
-    )
+    try:
+        send_mail(
+            'Resend OTP',
+            f'Your new OTP is: {otp}',
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
+        messages.success(request, "New OTP sent to your email")
+    except Exception as e:
+        print("RESEND OTP ERROR:", e)
+        messages.error(request, "Failed to send OTP")
 
-    messages.success(request, "New OTP sent to your email")
     return redirect('verify_otp')
+
 
 # ===========================
 # BASE
@@ -99,7 +110,9 @@ def register(request):
                 return redirect('register')
 
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
+
+            # ✅ FIXED PASSWORD
+            user.set_password(form.cleaned_data['password1'])
 
             otp = generate_otp()
             user.otp = otp
@@ -109,12 +122,18 @@ def register(request):
 
             request.session['verify_user'] = user.id
 
-            send_mail(
-                'OTP Verification',
-                f'Your OTP is: {otp}',
-                settings.EMAIL_HOST_USER,
-                [user.email],
-            )
+            # ✅ SAFE EMAIL SEND
+            try:
+                send_mail(
+                    'OTP Verification',
+                    f'Your OTP is: {otp}',
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                )
+            except Exception as e:
+                print("REGISTER EMAIL ERROR:", e)
+                messages.error(request, "Email sending failed")
+                return redirect('register')
 
             return redirect('verify_otp')
 
@@ -133,7 +152,11 @@ def verify_otp(request):
     if not user_id:
         return redirect('register')
 
-    user = UserAccount.objects.get(id=user_id)
+    user = UserAccount.objects.filter(id=user_id).first()
+
+    if not user:
+         messages.error(request, "User not found")
+         return redirect('register')
 
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
@@ -165,7 +188,11 @@ def userlogin(request):
         password = request.POST.get('password')
 
         try:
-            user = UserAccount.objects.get(username=username)
+            user = UserAccount.objects.filter(email=username).first()
+
+            if not user:
+                  messages.error(request, "User not found")
+            return redirect('userlogin')
 
             if not user.check_password(password):
                 messages.error(request, "Incorrect password")
@@ -195,7 +222,10 @@ def userhome(request):
     if not user_id:
         return redirect('userlogin')
 
-    user = UserAccount.objects.get(id=user_id)
+    user = UserAccount.objects.filter(id=user_id).first()
+
+    if not user:
+       return redirect('userlogin')
     return render(request, 'userhome.html', {'user': user})
 
 
@@ -246,7 +276,6 @@ def prediction(request):
                     for chunk in img_file.chunks():
                         f.write(chunk)
 
-            # ✅ FILE SAVE CHECK
             if not os.path.exists(save_path):
                 return render(request, 'prediction.html', {
                     'form': form,
@@ -255,7 +284,7 @@ def prediction(request):
 
             uploaded_image = f"{settings.MEDIA_URL}uploaded/{img_name}"
 
-            # ================= GEMINI VALIDATION =================
+            # ✅ DEBUG FIX
             try:
                 if not request.session.get('validated'):
                     is_cheque, reason = validate_cheque_image(save_path)
@@ -263,8 +292,8 @@ def prediction(request):
                         request.session['validated'] = True
                 else:
                     is_cheque = True
-                    reason = "Already validated"
-            except:
+            except Exception as e:
+                print("VALIDATION ERROR:", e)
                 is_cheque = True
 
             if not is_cheque:
@@ -274,24 +303,25 @@ def prediction(request):
                     'uploaded_image': uploaded_image
                 })
 
-            # ================= PROCESS =================
             output = process_cheque(save_path)
             details = extract_cheque_details(save_path)
 
-            # ✅ SESSION FIX
+            print("DETAILS:", details)   # ✅ ADD THIS
+
             request.session['uploaded_image'] = uploaded_image
             request.session['output'] = output
             request.session['details'] = details
 
-            # ================= OTP =================
             if details:
-                acc = details.get("Account Number") or details.get("account_number")
+              acc = details.get("Account Number") or details.get("account_number")
 
-                if acc:
-                    sent = send_owner_alert(request, acc)
+              print("ACCOUNT:", acc)   # ✅ ADD THIS
 
-                    if sent:
-                        return redirect('verify_owner_otp')
+              if acc:
+                 sent = send_owner_alert(request, acc)
+
+                 if sent:
+                    return redirect('verify_owner_otp')
 
         else:
             error = "Invalid form"
@@ -305,29 +335,6 @@ def prediction(request):
         'output': output,
         'details': details,
         'error': error
-    })
-
-def cheque_samples(request):
-    dataset_dir = os.path.join(
-        settings.MEDIA_ROOT,
-        "cheque_data/images/train/fixed"
-    )
-
-    images = []
-    if os.path.exists(dataset_dir):
-        for f in os.listdir(dataset_dir):
-            if f.lower().endswith(".jpg"):
-                images.append(
-                    f"{settings.MEDIA_URL}cheque_data/images/train/fixed/{f}"
-                )
-
-    return render(request, "ChequeSamples.html", {
-        "images": images
-    })
-
-def model_evaluation(request):
-    return render(request, "ModelEvaluation.html", {
-        "message": "Model evaluation temporarily disabled"
     })
 
 
