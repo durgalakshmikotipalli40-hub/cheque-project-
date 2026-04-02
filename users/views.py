@@ -349,11 +349,12 @@ def verify_owner_otp(request):
             output = request.session.get("output")
             details = request.session.get("details")
 
+            print("SESSION DATA:", uploaded_image, output, details)
+
             request.session.pop('owner_otp', None)
 
             return render(request, "prediction.html", {
-                "form": ImageUploadForm(),   # ✅ ADD THIS
-
+                "form": ImageUploadForm(),   # 🔥 FIX
                 "uploaded_image": uploaded_image,
                 "output": output,
                 "details": details,
