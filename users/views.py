@@ -101,7 +101,10 @@ def register(request):
                     f'Your OTP is: {otp}',
                     settings.EMAIL_HOST_USER,
                     [user.email],
+                    fail_silently=True
                 )
+
+                print("OTP SENT:", otp)
             except Exception as e:
                 print("EMAIL ERROR:", e)
                 messages.error(request, "Failed to send OTP")
