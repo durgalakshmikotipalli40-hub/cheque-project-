@@ -60,6 +60,7 @@ def basefunction(request):
 # REGISTER
 # ===========================
 def register(request):
+
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
 
@@ -72,7 +73,7 @@ def register(request):
                 messages.error(request, "Email already registered.")
                 return render(request, 'register.html', {'form': form})
 
-            # ✅ PASSWORD VALIDATION ADD HERE
+            # ✅ PASSWORD VALIDATION
             password = form.cleaned_data['password']
             confirm_password = form.cleaned_data['confirm_password']
 
@@ -94,7 +95,7 @@ def register(request):
 
             request.session['verify_user'] = user.id
 
-            # ✅ SAFE EMAIL SEND
+            # ✅ EMAIL SEND
             try:
                 send_mail(
                     'OTP Verification',
@@ -103,18 +104,22 @@ def register(request):
                     [user.email],
                     fail_silently=True
                 )
-
                 print("OTP SENT:", otp)
+
             except Exception as e:
                 print("EMAIL ERROR:", e)
                 messages.error(request, "Failed to send OTP")
                 return render(request, 'register.html', {'form': form})
+
             return redirect('verify_otp')
+
         else:
             messages.error(request, "Invalid form data")
-        return render(request, 'register.html', {'form': form})
-    
 
+    else:
+        form = RegistrationForm()   # ✅ FIXED HERE
+
+    return render(request, 'register.html', {'form': form})
         
 
 
