@@ -258,7 +258,7 @@ def prediction(request):
                 for chunk in img_file.chunks():
                     f.write(chunk)
 
-            uploaded_image = f"{settings.MEDIA_URL}uploaded/{img_file.name}"
+            uploaded_image = settings.MEDIA_URL + "uploaded/" + img_file.name
 
             # ✅ VALIDATION
             try:
@@ -285,7 +285,7 @@ def prediction(request):
                 details = extract_cheque_details(save_path)
             except Exception as e:
                 print("EXTRACT ERROR:", e)
-                details = None   # ✅ FIX
+                details = {}   # ✅ FIX
 
             print("DETAILS:", details)
 
