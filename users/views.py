@@ -263,8 +263,9 @@ def prediction(request):
             # ✅ VALIDATION
             try:
                 is_cheque, reason = validate_cheque_image(save_path)
-            except:
-                is_cheque = True
+            except Exception as e:
+                print("VALIDATION ERROR:", e)
+                is_cheque = False   # 🔥 CHANGE THIS
 
             if not is_cheque:
                 return render(request, 'prediction.html', {
