@@ -109,17 +109,13 @@ def register(request):
                 print("EMAIL ERROR:", e)
                 messages.error(request, "Failed to send OTP")
                 return render(request, 'register.html', {'form': form})
-            
+            return redirect('verify_otp')
         else:
             messages.error(request, "Invalid form data")
+        return render(request, 'register.html', {'form': form})
     
 
-            return redirect('verify_otp')
-
-    else:
-        form = RegistrationForm()
-
-    return render(request, 'register.html', {'form': form})
+        
 
 
 # ===========================
@@ -335,6 +331,7 @@ def prediction(request):
 # ===========================
 # VERIFY OWNER OTP
 # ===========================
+from .forms import ImageUploadForm
 def verify_owner_otp(request):
 
     if request.method == "POST":
@@ -347,9 +344,11 @@ def verify_owner_otp(request):
             output = request.session.get("output")
             details = request.session.get("details")
 
-            request.session.flush()
+            request.session.pop('owner_otp', None)
 
             return render(request, "prediction.html", {
+                "form": ImageUploadForm(),   # ✅ ADD THIS
+
                 "uploaded_image": uploaded_image,
                 "output": output,
                 "details": details,
