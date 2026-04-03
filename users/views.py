@@ -324,6 +324,10 @@ def prediction(request):
 
     else:
         form = ImageUploadForm()
+        # 🔥 PULL FROM SESSION TO PERSIST THE VIEW
+        uploaded_image = request.session.get('uploaded_image')
+        output = request.session.get('output')
+        details = request.session.get('details')
 
     return render(request, 'prediction.html', {
         'form': form,
