@@ -31,7 +31,7 @@ def validate_cheque_image(image_path):
     """
 
     model = genai.GenerativeModel(
-        model_name="gemini-2.5-flash",
+        model_name="gemini-1.5-flash-latest",
         generation_config={"response_mime_type": "application/json"}
     )
 

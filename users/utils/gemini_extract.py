@@ -42,7 +42,7 @@ def extract_cheque_details(image_path):
 
     # 🤖 Gemini model
     model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
+        model_name="gemini-1.5-flash-latest",
         generation_config={"response_mime_type": "application/json"}
     )
 
