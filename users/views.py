@@ -396,26 +396,16 @@ def resend_owner_otp(request):
 # ===========================
 def cheque_samples(request):
     from django.conf import settings
-    import os
 
-    upload_dir = os.path.join(settings.MEDIA_ROOT, "uploaded")
-    images = []
+    images = [
+        settings.STATIC_URL + "images/sample1.jpg",
+        settings.STATIC_URL + "images/sample2.jpg",
+        settings.STATIC_URL + "images/sample3.jpg",
+        settings.STATIC_URL + "images/sample4.jpg",
+        settings.STATIC_URL + "images/sample5.jpg",
+        settings.STATIC_URL + "images/sample6.jpg",
+    ]
 
-    if os.path.exists(upload_dir):
-        valid_exts = {".jpg", ".jpeg", ".png"}
-        # Fetch uploaded images and sort them by modified time (latest first)
-        files = []
-        for f in os.listdir(upload_dir):
-            if any(f.lower().endswith(ext) for ext in valid_exts):
-                files.append(f)
-        
-        # Sort files (optional, but good for UX)
-        files.sort(key=lambda x: os.path.getmtime(os.path.join(upload_dir, x)), reverse=True)
-
-        for filename in files:
-            images.append(settings.MEDIA_URL + "uploaded/" + filename)
-
-    # If no images are uploaded yet, fallback to an empty list or show something else
     return render(request, "ChequeSamples.html", {
         "images": images
     })
