@@ -40,11 +40,35 @@ def extract_cheque_details(image_path):
     }
     """
 
+    # 🔥 DYNAMICALLY FIND BEST AVAILABLE MODEL
+    available = []
+    try:
+        available = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+    except Exception as e:
+        print("Model list error:", e)
+
+    best_model = "gemini-1.5-flash"
+    for want in ["models/gemini-1.5-flash", "gemini-1.5-flash", "models/gemini-1.5-flash-latest", "gemini-1.5-flash-latest", "models/gemini-1.5-pro", "gemini-1.5-pro", "models/gemini-pro-vision", "gemini-pro-vision"]:
+        if want in available:
+            best_model = want
+            break
+            
+    if best_model not in available and available:
+        best_model = available[0]
+
+    print("USING MODEL FOR EXTRACTION:", best_model)
+
     # 🤖 Gemini model
-    model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash-latest",
-        generation_config={"response_mime_type": "application/json"}
-    )
+    try:
+        if "pro-vision" in best_model:
+            model = genai.GenerativeModel(model_name=best_model)
+        else:
+            model = genai.GenerativeModel(
+                model_name=best_model,
+                generation_config={"response_mime_type": "application/json"}
+            )
+    except:
+        model = genai.GenerativeModel(model_name=best_model)
 
     # 🚀 API call
     response = model.generate_content(
