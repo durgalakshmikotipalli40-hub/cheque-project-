@@ -1,8 +1,9 @@
 import google.generativeai as genai
 import base64
 import json
+from django.conf import settings
 
-genai.configure(api_key="AIzaSyAiMH_OGnBEpu_Ox5tQp45o4TP6WfpgHOQ")
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def validate_cheque_image(image_path):
 

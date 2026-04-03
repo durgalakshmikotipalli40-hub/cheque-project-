@@ -3,9 +3,10 @@ import base64
 import json
 import os
 import re
+from django.conf import settings
 
 # ✅ Use environment variable (IMPORTANT)
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
 def extract_cheque_details(image_path):
