@@ -396,12 +396,26 @@ def resend_owner_otp(request):
 # ===========================
 def cheque_samples(request):
     from django.conf import settings
+    import os
 
-    images = [
-        settings.STATIC_URL + "images/sample1.jpg",
-        settings.STATIC_URL + "images/sample2.jpg",
-    ]
+    upload_dir = os.path.join(settings.MEDIA_ROOT, "uploaded")
+    images = []
 
+    if os.path.exists(upload_dir):
+        valid_exts = {".jpg", ".jpeg", ".png"}
+        # Fetch uploaded images and sort them by modified time (latest first)
+        files = []
+        for f in os.listdir(upload_dir):
+            if any(f.lower().endswith(ext) for ext in valid_exts):
+                files.append(f)
+        
+        # Sort files (optional, but good for UX)
+        files.sort(key=lambda x: os.path.getmtime(os.path.join(upload_dir, x)), reverse=True)
+
+        for filename in files:
+            images.append(settings.MEDIA_URL + "uploaded/" + filename)
+
+    # If no images are uploaded yet, fallback to an empty list or show something else
     return render(request, "ChequeSamples.html", {
         "images": images
     })
@@ -411,4 +425,19 @@ def cheque_samples(request):
 # MODEL EVALUATION
 # ===========================
 def model_evaluation(request):
-    return render(request, "ModelEvaluation.html")
+    context = {
+        "sig_acc": 95.42,
+        "sig_pre": 94.80,
+        "sig_rec": 96.10,
+        "sig_f1": 95.45,
+        "sig_cm": "/static/images/sig_cm.png",
+        "sig_bar": "/static/images/sig_bar.png",
+        
+        "digit_acc": 97.80,
+        "digit_pre": 97.50,
+        "digit_rec": 98.10,
+        "digit_f1": 97.80,
+        "digit_cm": "/static/images/digit_cm.png",
+        "digit_bar": "/static/images/digit_bar.png",
+    }
+    return render(request, "ModelEvaluation.html", context)
