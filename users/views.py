@@ -344,7 +344,7 @@ def verify_owner_otp(request):
         entered = request.POST.get("otp")
         real = request.session.get("owner_otp")
 
-        if entered == real:
+        if entered and real and entered == str(real):
 
             uploaded_image = request.session.get("uploaded_image")
             output = request.session.get("output")
@@ -363,11 +363,32 @@ def verify_owner_otp(request):
             })
 
         else:
-            return render(request, "verify_owner_otp.html", {
-                "error": "Invalid OTP"
-            })
+            messages.error(request, "Invalid OTP")
+            return redirect("verify_owner_otp")
 
     return render(request, "verify_owner_otp.html")
+
+
+# ===========================
+# RESEND OWNER OTP
+# ===========================
+def resend_owner_otp(request):
+    details = request.session.get('details')
+    acc = None
+    if details and isinstance(details, dict):
+        acc = details.get("Account Number") or details.get("account_number") or details.get("Account_Number")
+    
+    if acc:
+        sent = send_owner_alert(request, acc)
+    else:
+        sent = send_owner_alert(request, "dummy")
+        
+    if sent:
+        messages.success(request, "New OTP sent successfully")
+    else:
+        messages.error(request, "Failed to send OTP")
+        
+    return redirect('verify_owner_otp')
 
 
 # ===========================

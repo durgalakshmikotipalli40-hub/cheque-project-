@@ -121,7 +121,7 @@
     </p>
 
     {% for message in messages %}
-        <div class="msg error">{{ message }}</div>
+        <div class="msg {% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</div>
     {% endfor %}
 
 </div>

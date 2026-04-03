@@ -23,6 +23,7 @@ urlpatterns = [
     path("prediction/", uviews.prediction, name="prediction"),
 
     path('verify-owner-otp/', uviews.verify_owner_otp, name='verify_owner_otp'),
+    path('resend-owner-otp/', uviews.resend_owner_otp, name='resend_owner_otp'),
 
     path("model_evaluation/", uviews.model_evaluation, name="model_evaluation"),
 
