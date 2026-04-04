@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,20 +13,35 @@
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: url('{% static "images/bank_bg.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        /* Dark overlay for better readability */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
         }
 
         .container {
-            background: #fff;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
             padding: 40px;
-            border-radius: 15px;
+            border-radius: 20px;
             width: 350px;
             text-align: center;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0px 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         h2 {
