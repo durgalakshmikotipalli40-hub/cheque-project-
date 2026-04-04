@@ -39,11 +39,12 @@ def send_owner_alert(request, account_number):
             message=f"Your OTP is: {otp}",
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[email],
+            fail_silently=False
         )
-        return True
+        return True, otp
     except Exception as e:
-        print("OWNER OTP ERROR:", e)
-        return False
+        print("OWNER OTP ERROR (Demo mode fallback):", e)
+        return False, otp
 
 
 # ===========================
@@ -102,14 +103,12 @@ def register(request):
                     f'Your OTP is: {otp}',
                     settings.EMAIL_HOST_USER,
                     [user.email],
-                    fail_silently=True
+                    fail_silently=False
                 )
                 print("OTP SENT:", otp)
-
             except Exception as e:
-                print("EMAIL ERROR:", e)
-                messages.error(request, "Failed to send OTP")
-                return render(request, 'register.html', {'form': form})
+                print("EMAIL ERROR (Demo mode fallback):", e)
+                messages.warning(request, f"Email server busy. Use Demo OTP: {otp}")
 
             return redirect('verify_otp')
 
@@ -179,8 +178,8 @@ def resend_otp(request):
         )
         messages.success(request, "New OTP sent")
     except Exception as e:
-        print("RESEND ERROR:", e)
-        messages.error(request, "Failed to send OTP")
+        print("RESEND ERROR (Demo mode fallback):", e)
+        messages.warning(request, f"Email server busy. Your Demo OTP is: {otp}")
 
     return redirect('verify_otp')
 
@@ -312,15 +311,14 @@ def prediction(request):
 
             # 🔥 FORCE OTP (for testing)
             if acc:
-                sent = send_owner_alert(request, acc)
+                sent, the_otp = send_owner_alert(request, acc)
             else:
-                print("Account not found → still sending OTP for testing")
-                sent = send_owner_alert(request, "dummy")
+                sent, the_otp = send_owner_alert(request, "dummy")
 
-            if sent:
-                return redirect('verify_owner_otp')
-            else:
-                error = "OTP sending failed"
+            if not sent:
+                messages.warning(request, f"Email blocked by server. Use Demo OTP: {the_otp}")
+
+            return redirect('verify_owner_otp')
 
     else:
         form = ImageUploadForm()
@@ -383,14 +381,14 @@ def resend_owner_otp(request):
         acc = details.get("Account Number") or details.get("account_number") or details.get("Account_Number")
     
     if acc:
-        sent = send_owner_alert(request, acc)
+        sent, the_otp = send_owner_alert(request, acc)
     else:
-        sent = send_owner_alert(request, "dummy")
+        sent, the_otp = send_owner_alert(request, "dummy")
         
     if sent:
         messages.success(request, "New OTP sent successfully")
     else:
-        messages.error(request, "Failed to send OTP")
+        messages.warning(request, f"Email blocked by server. Use Demo OTP: {the_otp}")
         
     return redirect('verify_owner_otp')
 
