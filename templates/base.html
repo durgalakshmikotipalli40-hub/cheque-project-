@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Automated Bank Cheque Verification System</title>
@@ -13,183 +14,315 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <style>
-        *{
-            margin:0; padding:0;
-            box-sizing:border-box;
-            font-family:'Inter', sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        body{
-            min-height:100vh;
-            color:#1d1d1f;
+
+        body {
+            min-height: 100vh;
+            color: #1d1d1f;
             background-image:url('{% static "images/bank_bg.jpg" %}');
-            background-size:cover;
-            background-position:center;
-            background-attachment:fixed;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
-         .overlay {
-              min-height: 100vh;
-              background: none;
+
+        .overlay {
+            min-height: 100vh;
+            background: none;
         }
 
         /* NAVBAR */
-        .navbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:22px 70px;
-            background:rgba(255,255,255,0.78);
-            backdrop-filter:blur(18px);
-            border-bottom:1px solid rgba(0,0,0,0.08);
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 70px;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
-        .navbar-brand{
-            font-size:1.7rem;
-            font-weight:700;
-            color:#000;
+
+        .navbar-brand {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #000;
         }
-        .navbar ul{
-            list-style:none;
-            display:flex;
-            gap:32px;
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 32px;
         }
-        .navbar ul li a{
-            text-decoration:none;
-            color:#1d1d1f;
-            font-weight:500;
-            font-size:0.95rem;
-            padding:8px 14px;
-            border-radius:10px;
-            transition:all 0.25s ease;
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: #1d1d1f;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 8px 14px;
+            border-radius: 10px;
+            transition: all 0.25s ease;
         }
-        .navbar ul li a:hover{
-            background:rgba(0,0,0,0.05);
+
+        .navbar ul li a:hover {
+            background: rgba(0, 0, 0, 0.05);
         }
-        .navbar ul li a.active{
-            background:rgba(0,122,255,0.15);
-            color:#007aff;
-            font-weight:600;
+
+        .navbar ul li a.active {
+            background: rgba(0, 122, 255, 0.15);
+            color: #007aff;
+            font-weight: 600;
         }
 
         /* MAIN CONTENT */
-        .content{ padding:100px 60px; }
-
-        .glass-card{
-            max-width:980px;
-            margin:auto;
-            padding:60px;
-            background:linear-gradient(rgba(255,255,255,0.55));
-            border-radius:26px;
-            box-shadow:0 25px 70px rgba(0,0,0,0.12);
-        }
-        .glass-card h1{
-            font-size:2.6rem;
-            font-weight:700;
-            margin-bottom:22px;
-            letter-spacing:-0.8px;
-        }
-        .glass-card p{
-            font-size:1.08rem;
-            line-height:1.9;
-            color:#444;
+        .content {
+            padding: 100px 60px;
         }
 
-        footer{
-            margin-top:80px;
-            padding:25px;
-            text-align:center;
-            font-size:0.9rem;
-            color:black;
+        .glass-card {
+            max-width: 980px;
+            margin: auto;
+            padding: 60px;
+            background: linear-gradient(rgba(255, 255, 255, 0.55));
+            border-radius: 26px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.12);
         }
 
-        @media(max-width:768px){
-            .navbar{flex-direction:column; gap:16px; padding:20px;}
-            .content{padding:50px 20px;}
-            .glass-card{padding:35px;}
+        .glass-card h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin-bottom: 22px;
+            letter-spacing: -0.8px;
+        }
+
+        .glass-card p {
+            font-size: 1.08rem;
+            line-height: 1.9;
+            color: #444;
+        }
+
+        footer {
+            margin-top: 80px;
+            padding: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: black;
+        }
+
+        @media(max-width:768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .content {
+                padding: 50px 20px;
+            }
+
+            .glass-card {
+                padding: 35px;
+            }
         }
 
         /* Toast */
-        .toast-container{
-            position:fixed;
-            top:20px;
-            right:20px;
-            z-index:9999;
-            display:flex;
-            flex-direction:column;
-            gap:15px;
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .toast{
-            min-width:300px;
-            max-width:360px;
-            padding:15px 20px;
-            border-radius:12px;
-            color:#fff;
-            font-weight:500;
-            display:flex;
-            align-items:center;
-            gap:12px;
-            box-shadow:0 8px 20px rgba(0,0,0,0.25);
-            transform:translateX(120%);
-            opacity:0;
-            animation:slideIn 0.6s forwards, fadeOut 0.6s forwards;
-            animation-delay:0s,4s;
+
+        .toast {
+            min-width: 300px;
+            max-width: 360px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            transform: translateX(120%);
+            opacity: 0;
+            animation: slideIn 0.6s forwards, fadeOut 0.6s forwards;
+            animation-delay: 0s, 4s;
         }
-        .toast.success{background:#28a745;}
-        .toast.error{background:#dc3545;}
-        .toast.warning{background:#ffc107; color:#222;}
-        .toast.info{background:#17a2b8;}
-        .toast .close-btn{
-            margin-left:auto;
-            cursor:pointer;
-            opacity:0.7;
-            font-size:1.1rem;
+
+        .toast.success {
+            background: #28a745;
         }
-        @keyframes slideIn{
-            from{transform:translateX(120%); opacity:0;}
-            to{transform:translateX(0); opacity:1;}
+
+        .toast.error {
+            background: #dc3545;
         }
-        @keyframes fadeOut{
-            from{opacity:1;}
-            to{opacity:0; transform:translateX(120%);}
+
+        .toast.warning {
+            background: #ffc107;
+            color: #222;
+        }
+
+        .toast.info {
+            background: #17a2b8;
+        }
+
+        .toast .close-btn {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 1.1rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(120%);
+            }
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .navbar ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 10px;
+                gap: 10px;
+                padding: 0;
+            }
+
+            .navbar ul li a {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .container,
+            .auth-container,
+            .login-container {
+                margin: 20px auto !important;
+                padding: 20px !important;
+                width: 95% !important;
+                max-width: 100% !important;
+                border-radius: 15px !important;
+            }
+
+            .content {
+                padding: 20px !important;
+            }
+
+            .glass-card {
+                padding: 20px !important;
+            }
+
+            h1 {
+                font-size: 1.5rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem !important;
+            }
+
+            .navbar-brand {
+                font-size: 1.4rem !important;
+            }
+
+            table {
+                font-size: 0.8rem;
+                overflow-x: auto;
+                display: block;
+            }
+
+            th,
+            td {
+                padding: 6px;
+            }
+
+            .upload-box {
+                padding: 15px;
+            }
+
+            .toast-container {
+                width: 90%;
+                left: 5%;
+                right: 5%;
+                top: 10px;
+            }
+
+            img.preview-img {
+                border-width: 2px;
+            }
         }
     </style>
 </head>
 
 <body>
-<div class="overlay">
+    <div class="overlay">
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="navbar-brand">🏦 Bank Cheque Verification </div>
-        <ul>
-            <li><a href="{% url 'basefunction' %}" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-            <li><a href="{%url 'userlogin'%}"><i class="fa-solid fa-user"></i> User Login</a></li>
-            <li><a href="{%url 'adminlogin'%}"><i class="fa-solid fa-user-shield"></i> Administration</a></li>
-            <li><a href="{%url 'register'%}"><i class="fa-solid fa-user-plus"></i> Create Account</a></li>
-        </ul>
-    </nav>
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="navbar-brand">🏦 Bank Cheque Verification </div>
+            <ul>
+                <li><a href="{% url 'basefunction' %}" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{%url 'userlogin'%}"><i class="fa-solid fa-user"></i> User Login</a></li>
+                <li><a href="{%url 'adminlogin'%}"><i class="fa-solid fa-user-shield"></i> Administration</a></li>
+                <li><a href="{%url 'register'%}"><i class="fa-solid fa-user-plus"></i> Create Account</a></li>
+            </ul>
+        </nav>
 
-    <!-- MAIN CONTENT -->
-    <div class="content">
-        <div class="glass-card">
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <div class="glass-card">
 
-            <h1>Verifying bank checks using deep learning and image processing</h1>
+                <h1>Deep Learning and Image Processing Based
+                    Bank Cheque Verification System
+                </h1>
 
-            <p>
-               “Verifying Bank Checks Using Deep Learning and Image Processing.”
-                It automates the extraction and validation of key cheque parameters such as the  
-                <strong>IFSC code, cheque number, account number, legal amount, etc..</strong> 
-                of the cheque issuer.
-                <br><br>
+                <p>
+                    “Deep Learning and Image Processing BasedBank Cheque Verification System.”
+                    It automates the extraction and validation of key cheque parameters such as the
+                    <strong>IFSC code, cheque number, account number, legal amount, etc..</strong>
+                    of the cheque issuer.
+                    <br><br>
 
 
 
-            </p>
+                </p>
 
+            </div>
         </div>
-    </div>
 
-    <!-- TOAST MESSAGES -->
-    <div class="toast-container">
-        {% if messages %}
+        <!-- TOAST MESSAGES -->
+        <div class="toast-container">
+            {% if messages %}
             {% for message in messages %}
             <div class="toast {{ message.tags }}">
                 {% if message.tags == 'success' %}
@@ -205,21 +338,22 @@
                 <span class="close-btn">&times;</span>
             </div>
             {% endfor %}
-        {% endif %}
+            {% endif %}
+        </div>
+
+        <footer>
+            © 2026 Automated Cheque Verification System | Powered by Deep Learning & Image Processing
+        </footer>
+
     </div>
 
-    <footer>
-        © 2026 Automated Cheque Verification System | Powered by Deep Learning & Image Processing
-    </footer>
-
-</div>
-
-<script>
-    document.querySelectorAll('.toast').forEach(toast=>{
-        toast.querySelector('.close-btn').addEventListener('click',()=>toast.remove());
-        setTimeout(()=>toast.remove(),4000);
-    });
-</script>
+    <script>
+        document.querySelectorAll('.toast').forEach(toast => {
+            toast.querySelector('.close-btn').addEventListener('click', () => toast.remove());
+            setTimeout(() => toast.remove(), 4000);
+        });
+    </script>
 
 </body>
+
 </html>

@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard | Vision Transformer Retinal AI</title>
@@ -30,8 +31,8 @@
         }
 
         .overlay {
-              min-height: 100vh;
-              background: none;
+            min-height: 100vh;
+            background: none;
         }
 
         /* ================= NAVBAR ================= */
@@ -42,7 +43,7 @@
             padding: 22px 70px;
             background: rgba(255, 255, 255, 0.78);
             backdrop-filter: blur(18px);
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .navbar-brand {
@@ -69,7 +70,7 @@
         }
 
         .navbar ul li a:hover {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
         }
 
         .navbar ul li a.active {
@@ -89,7 +90,7 @@
             padding: 60px;
             background: linear-gradient(rgba(255, 255, 255, 0.55));
             border-radius: 26px;
-            box-shadow: 0 25px 70px rgba(0,0,0,0.12);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.12);
         }
 
         .glass-card h1 {
@@ -120,7 +121,8 @@
         /* ======================== */
         .toast-container {
             position: fixed;
-            top: 110px; /* ✅ BELOW NAVBAR */
+            top: 110px;
+            /* ✅ BELOW NAVBAR */
             right: 20px;
             z-index: 9999;
             display: flex;
@@ -136,7 +138,7 @@
             align-items: center;
             gap: 12px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             animation: slideIn 0.6s ease forwards;
         }
 
@@ -173,8 +175,15 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(120%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -183,79 +192,161 @@
                 gap: 16px;
                 padding: 20px;
             }
+
             .content {
                 padding: 50px 20px;
             }
+
             .glass-card {
                 padding: 35px;
+            }
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+                text-align: center;
+            }
+
+            .navbar ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 10px;
+                gap: 10px;
+                padding: 0;
+            }
+
+            .navbar ul li a {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+
+            .container,
+            .auth-container,
+            .login-container {
+                margin: 20px auto !important;
+                padding: 20px !important;
+                width: 95% !important;
+                max-width: 100% !important;
+                border-radius: 15px !important;
+            }
+
+            .content {
+                padding: 20px !important;
+            }
+
+            .glass-card {
+                padding: 20px !important;
+            }
+
+            h1 {
+                font-size: 1.5rem !important;
+            }
+
+            h2 {
+                font-size: 1.3rem !important;
+            }
+
+            .navbar-brand {
+                font-size: 1.4rem !important;
+            }
+
+            table {
+                font-size: 0.8rem;
+                overflow-x: auto;
+                display: block;
+            }
+
+            th,
+            td {
+                padding: 6px;
+            }
+
+            .upload-box {
+                padding: 15px;
+            }
+
+            .toast-container {
+                width: 90%;
+                left: 5%;
+                right: 5%;
+                top: 10px;
+            }
+
+            img.preview-img {
+                border-width: 2px;
             }
         }
     </style>
 </head>
 
 <body>
-<div class="overlay">
+    <div class="overlay">
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="navbar-brand">
-            🏦 Bank Cheque Verification
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                🏦 Bank Cheque Verification
+            </div>
+            <ul>
+                <li><a href="{% url 'adminhome' %}" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{% url 'admin_users_list' %}"><i class="fa-solid fa-users"></i> Users List</a></li>
+                <li><a href="{% url 'adminlogout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="glass-card">
+                <h1>Welcome, Administrator</h1>
+                <p>
+                    This administrative dashboard enables secure management of registered users
+                    and operational monitoring of the <strong>Deep Learning and Image Processing Based Bank Cheque
+                        Verification System
+                    </strong>.
+                    <br><br>
+                    Administrators can approve user access, control account status,
+                    and ensure system integrity for reliable clinical research
+                    and deployment.
+                </p>
+            </div>
         </div>
-        <ul>
-            <li><a href="{% url 'adminhome' %}" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
-            <li><a href="{% url 'admin_users_list' %}"><i class="fa-solid fa-users"></i> Users List</a></li>
-            <li><a href="{% url 'adminlogout' %}"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-        </ul>
-    </nav>
 
-    <!-- CONTENT -->
-    <div class="content">
-        <div class="glass-card">
-            <h1>Welcome, Administrator</h1>
-            <p>
-                This administrative dashboard enables secure management of registered users
-                and operational monitoring of the <strong>Verifying bank checks using deep learning and
-image processing</strong>.
-                <br><br>
-                Administrators can approve user access, control account status,
-                and ensure system integrity for reliable clinical research
-                and deployment.
-            </p>
-        </div>
-    </div>
-
-    <!-- TOAST MESSAGES -->
-    <div class="toast-container">
-        {% if messages %}
+        <!-- TOAST MESSAGES -->
+        <div class="toast-container">
+            {% if messages %}
             {% for message in messages %}
-                <div class="toast {{ message.tags }}">
-                    {% if message.tags == 'success' %}
-                        <i class="fa-solid fa-circle-check"></i>
-                    {% elif message.tags == 'error' %}
-                        <i class="fa-solid fa-circle-xmark"></i>
-                    {% elif message.tags == 'warning' %}
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    {% else %}
-                        <i class="fa-solid fa-info-circle"></i>
-                    {% endif %}
-                    <span>{{ message }}</span>
-                </div>
+            <div class="toast {{ message.tags }}">
+                {% if message.tags == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+                {% elif message.tags == 'error' %}
+                <i class="fa-solid fa-circle-xmark"></i>
+                {% elif message.tags == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                {% else %}
+                <i class="fa-solid fa-info-circle"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
             {% endfor %}
-        {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            © 2026 Automated Cheque Verification System | Powered by Deep Learning & Image Processing
+        </footer>
+
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-           © 2026 Automated Cheque Verification System | Powered by Deep Learning & Image Processing
-    </footer>
-
-</div>
-
-<script>
-    document.querySelectorAll('.toast').forEach(toast => {
-        setTimeout(() => toast.remove(), 4000);
-    });
-</script>
+    <script>
+        document.querySelectorAll('.toast').forEach(toast => {
+            setTimeout(() => toast.remove(), 4000);
+        });
+    </script>
 
 </body>
+
 </html>
